@@ -1,8 +1,9 @@
-#pragma once
+
 #ifndef RANDOMPRIMEGEN_H
 #define RANDOMPRIMEGEN_H
 
 #include "BigInt.h"
+#include <time.h>
 
 class RandomPrimeGen
 {

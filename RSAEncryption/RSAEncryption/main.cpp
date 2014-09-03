@@ -2,8 +2,7 @@
 #include <iostream>
 #include <string>
 #include "RandomPrimeGen.h"
-using std::endl;
-using std::cout;
+using namespace std;
 
 int main(int argc, char *argv[])
 {
@@ -12,11 +11,13 @@ int main(int argc, char *argv[])
 		exit(1);
 	}
 	if (argc == 2) {   //s
-		int log10pp1 = atoi(argv[1]);
-		cout << "size of the prime: ";
-		cout << log10pp1 << endl;
+		int size = atoi(argv[1]);
+		cout << flush;
+		//cout <<"size of the prime: "<< static_cast<int>(size) << endl;
 		//call your random prime generator ...
-		//RandomPrimeGen(log10pp1);
+
+		RandomPrimeGen rand(size);
+		//cout << (int)rand.GetSize() << endl;
 	}
 	if (argc == 3) {   //a b
 		string a = argv[1];
