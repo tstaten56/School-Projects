@@ -15,7 +15,9 @@ public:
 	RandomPrimeGen(int);
 	~RandomPrimeGen();
 	void Initialize();
-	void FermatsTests();
+	void RandomPrimeGenTests();
+	bool FermatsLittleTest(BigInt, BigInt);
+	BigInt GenerateNum(BigInt, BigInt);
 };
 
 #endif

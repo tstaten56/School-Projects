@@ -11,12 +11,14 @@ int main(int argc, char *argv[])
 		exit(1);
 	}
 	if (argc == 2) {   //s
-		int size = atoi(argv[1]);
+		BigInt size2 = atoi(argv[1]);
 		cout << flush;
-		//cout <<"size of the prime: "<< static_cast<int>(size) << endl;
+		cout <<"size of the prime: "<< size2 << endl;   //Change to int and test later
 		//call your random prime generator ...
+		int size = atoi(argv[1]);
 
 		RandomPrimeGen rand(size);
+		rand.RandomPrimeGenTests();
 		//cout << (int)rand.GetSize() << endl;
 	}
 	if (argc == 3) {   //a b
@@ -48,6 +50,7 @@ int main(int argc, char *argv[])
 			//call your RSA decryption ...
 		}
 	}
+	
 	return 0;
 }
 
