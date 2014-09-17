@@ -68,6 +68,11 @@ int BigInt::GetInt()
 	return converted; //breakpoint here
 }
 
+bool BigInt::GetIsPositive () const
+{
+	return this->isPositive;
+}
+
 int BigInt::getLength() const {
 	return this->intAsList.size();
 }
@@ -92,42 +97,55 @@ BigInt BigInt::bigExp(BigInt base, BigInt exp)
 	//BigInt temp = bigExp()
 }
 
-//BigInt BigInt::modExp(BigInt const& base, BigInt exp, BigInt const& mod){
-//	// calculates (base^exp) % mod
-//	if (exp < 0) {
-//		throw new invalid_argument("Exponent may not be negative in modExp");
-//	}
-//	if (exp == 0) {
-//		return 1;
-//	}
-//	BigInt temp = modExp(base, exp.half(), mod);
-//	if (exp % 2 == 0) {
-//		return (temp*temp) % mod;
-//	}
-//	else {
-//		return (((temp*temp) % mod)*base) % mod;
-//	}
-//}
-
-BigInt BigInt::modExp(BigInt const& base, BigInt exp, BigInt const& mod) {
+BigInt BigInt::modExp(BigInt base, BigInt exp, BigInt const& mod){
+	// calculates (base^exp) % mod
 	if (exp < 0) {
 		throw new invalid_argument("Exponent may not be negative in modExp");
 	}
 	if (exp == 0) {
 		return 1;
 	}
-	if (exp == 1) {
-		return base % mod;
+	BigInt temp = modExp(base, exp.half(), mod);
+	if (exp % 2 == 0) {
+		return (temp*temp) % mod;
 	}
-	if ((exp % 2) == 1) //exponent odd
-	{
-		return modExp((base*base), ((exp - 1) / 2), mod) % mod;
+	else {
+		return (((temp*temp) % mod)*base) % mod;
 	}
-	else //exponent even
-	{
-		return modExp((base * base), (exp / 2), mod) % mod;
-	}
+	//BigInt remainder;
+	//BigInt x(1);
+	//while (exp != 0)
+	//{
+	//	remainder = exp % 2;
+	//	exp = exp / 2;
+	//	if (remainder == 1)
+	//	{
+	//		x = (x * base) % mod;
+	//	}
+	//    base = (base * base) % mod;
+	//}
+	//return x;
 }
+
+//BigInt BigInt::modExp(BigInt const& base, BigInt exp, BigInt const& mod) {
+//	if (exp < 0) {
+//		throw new invalid_argument("Exponent may not be negative in modExp");
+//	}
+//	if (exp == 0) {
+//		return 1;
+//	}
+//	if (exp == 1) {
+//		return base % mod;
+//	}
+//	if ((exp % 2) == 1) //exponent odd
+//	{
+//		return modExp((base*base), ((exp - 1) / 2), mod) % mod;
+//	}
+//	else //exponent even
+//	{
+//		return modExp((base * base), (exp / 2), mod) % mod;
+//	}
+//}
 
 BigInt BigInt::push(unsigned char digit)
 {
@@ -331,6 +349,10 @@ BigInt BigInt::operator-(BigInt const& thatNum) const {
 	// remove 0's from front of resulting number
 	while (result.front() == 0) {
 		result.pop_front();
+		if (result.size() == 0)
+		{
+			break;
+		}
 	}
 	return BigInt(result, resultIsPositive);
 }
@@ -587,8 +609,11 @@ void modExpTests() {
 	br();
 	cout << "modExp(2,4,5) = " << BigInt::modExp(2, 4, 5) << "? Should equal 1\n";
 	cout << "modExp(3,6,7) = " << BigInt::modExp(3, 6, 7) << " should equal 1\n";
-	cout << "modExp(65,5,11) = " << BigInt::modExp(65, 5, 11) << " should equal 1\n";
+	cout << "modExp(65,5,11) = " << BigInt::modExp(65, 5, 11) << " should equal 10\n";
 	cout << "modExp(66, 7, 17) = " << BigInt::modExp(66, 7, 17) << " should equal 8\n";
+	cout << "modExp(98, 4, 13) = " << BigInt::modExp(98, 4, 13) << " should equal 9\n";
+	int pause;
+	cin >> pause;
 }
 void divisionTests() {
 	br();
@@ -645,7 +670,7 @@ void bigIntTests() {
 	modExpTests();
 }
 
-int main(int argc, char *argv[]) {
-   bigIntTests();    
-   return 0;
-}
+//int main(int argc, char *argv[]) {
+//   bigIntTests();    
+//   return 0;
+//}

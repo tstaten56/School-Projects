@@ -10,14 +10,102 @@ RSAEncryption::~RSAEncryption()
 {
 }
 
+void RSAEncryption::setPhiN(BigInt p, BigInt q)
+{
+	phiN = (p - 1) * (q - 1);
+}
+
+void RSAEncryption::setN(BigInt p, BigInt q)
+{
+	n = (p * q);
+}
+
 BigInt RSAEncryption::ModInverse(string tempE, string tempP, string tempQ)
 {
-	BigInt e(tempE);
-	BigInt p(tempP);
-	BigInt q(tempQ);
-	BigInt n(p * q);
-	BigInt circleN((p - 1)*(q - 1));
-	return n;
+	//BigInt p(tempP);
+	//BigInt q(tempQ);
+	//setPhiN(p, q);
+	//BigInt a(phiN);
+	//BigInt m(tempE);
+	//BigInt tempX(0);
+	//BigInt tempY(1);
+	//BigInt u(1);
+	//BigInt v(0);
+	//BigInt b(m);
+	//while (a != 0)
+	//{
+	//	BigInt q(b / a);
+	//	BigInt temp1(b % a);
+	//	BigInt temp2(tempX - (u * q));
+	//	BigInt temp3(tempY - (v * q));
+	//	b = a;
+	//	a = temp1;
+	//	tempX = u;
+	//	tempY = v;
+	//	u = temp2;
+	//	v = temp3;
+	//}
+	setN(BigInt(tempP), BigInt(tempQ));
+	setPhiN(BigInt(tempP), BigInt(tempQ));
+	RSAEncryption::ExtEuclid(BigInt(tempE), phiN);
+	if (!x.GetIsPositive())
+	{
+		x = phiN + x;
+	}
+	//else
+	//{
+	//	x = tempX;
+	//}
+	////y = tempY; Shouldn't need this
+	//gcdNum = b;
+	return (u + phiN) % phiN;
+}
+
+void RSAEncryption::ExtEuclid(BigInt a, BigInt m)
+{
+	//BigInt p(tempP);
+	//BigInt q(tempQ);
+	//setPhiN(a);
+	//BigInt a(phiN);
+	//BigInt m(tempE);
+	BigInt tempX(0);
+	BigInt tempY(1);
+	BigInt u(1);
+	BigInt v(0);
+	BigInt b(m);
+	while (a != 0)
+	{
+		BigInt q(b / a);
+		BigInt temp1(b % a);
+		BigInt temp2(tempX - (u * q));
+		BigInt temp3(tempY - (v * q));
+		b = a;
+		a = temp1;
+		tempX = u;
+		tempY = v;
+		u = temp2;
+		v = temp3;
+	}
+	if (!tempX.GetIsPositive())
+	{
+		x = a + tempX;
+	}
+	else
+	{
+		x = tempX;
+	}
+	y = tempY; 
+	gcdNum = b;
+}
+
+void RSAEncryption::outputXY()
+{
+	cout << "(x, y): (" << x << ", " << y << ")." << endl;
+}
+
+void RSAEncryption::outputDN()
+{
+	cout << "(d, n): (" << x << ", " << n << ")." << endl;
 }
 
 BigInt RSAEncryption::MessageToInt(string message)
@@ -69,9 +157,16 @@ void messageConvertTests()
 	cin >> pause;
 }
 
+void modInverseTests()
+{
+	RSAEncryption ex;
+	ex.ModInverse("54", "23", "67");
+}
+
 void rsaEncryptionTests()
 {
-	messageConvertTests();
+	//messageConvertTests();
+	modInverseTests();
 }
 
 //int main(int argc, char *argv[]) {

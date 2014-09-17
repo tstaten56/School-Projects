@@ -29,12 +29,13 @@ public:
 	BigInt(int);
 
 	int getLength() const;
+	bool GetIsPositive() const;
 	//bool isPrime();
 
 	//static BigInt random(int const& digits);
 	//static BigInt randomOdd(int const& digits);
 	//static BigInt randomPrime(int const& digits);
-	static BigInt modExp(BigInt const& base, BigInt exponent, BigInt const& mod);
+	static BigInt modExp(BigInt base, BigInt exponent, BigInt const& mod);
 
 	friend ostream& operator<<(ostream& stream, BigInt const& num);
 	friend ostream& operator<<(ostream& stream, int const& num);
