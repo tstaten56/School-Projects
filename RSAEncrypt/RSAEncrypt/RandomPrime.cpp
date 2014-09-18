@@ -18,34 +18,35 @@ void RandomPrime::Initialize()
 	srand(time(NULL));
 	//Find one random number and add it to the rest of them for the number of length
 	bool notPrime = true;
+	num.clear();
+	//First digit is non-zero
+	unsigned char randNonZero(static_cast<unsigned char>((rand()) % 9) + 1);
+	num = num.push(randNonZero);
+	if (length > 1)
+	{
+		for (int i = 2; i < this->length; i++)
+		{
+			unsigned char randDigit(static_cast<unsigned char>(rand()) % 9);
+			num = num.push(randDigit);
+
+		}
+		//Last digit needs to be odd
+		int randInt(rand() % 9);
+		if ((randInt % 2) == 0) //even, make it odd
+		{
+			randInt++;
+		}
+		num = num.push(static_cast<unsigned char>(randInt));
+	}
 	while (notPrime)
 	{
-		num.clear();
-		//First digit is non-zero
-		unsigned char randNonZero(static_cast<unsigned char>((rand()) % 9) + 1);
-		num = num.push(randNonZero);
-		if (length > 1)
-		{
-			for (int i = 2; i < this->length; i++)
-			{
-				unsigned char randDigit(static_cast<unsigned char>(rand()) % 9);
-				num = num.push(randDigit);
-
-			}
-			//Last digit needs to be odd
-			bool even = true;
-			while (even)
-			{
-				int randInt(rand() % 9);
-				if ((randInt % 2) != 0)
-				{
-					even = false;
-					num = num.push(static_cast<unsigned char>(randInt));
-				}
-			}
-		}
+		cout << num << ", ";
 		notPrime = !FermatsLittleTest();
-	}	
+		if (notPrime)
+		{
+			num = num + 2;
+		}
+	}
 }
 
 bool RandomPrime::FermatsLittleTest()
@@ -79,29 +80,8 @@ BigInt RandomPrime::getNum()
 void GenerateNumTests()
 {
 	bool notPrime = true;
-	RandomPrime ex(2); //Change number here for digits of prime
-	while (notPrime)
-	{
-		ex.Initialize();
-		cout << "Number: " << ex.getNum() << " ";
-		//if ((ex.getNum() % 2) == 0)
-		//{
-		//	cout << " is not prime, it is even!" << endl;
-		//}
-		//if ((ex.getNum() < 10)) //Change these to be accurate!!
-		//{
-		//	cout << " is too small, out of bounds!" << endl;
-		//}
-		//else if (ex.getNum() > 99)
-		//{
-		//	cout << " is too large, out of bounds!" << endl;
-		//}
-		if (ex.FermatsLittleTest())
-		{
-			cout << " is prime!" << endl;
-			break;
-		}
-	}
+	RandomPrime ex(10); //Change number here for digits of prime
+	cout << ex.getNum() << " is prime!";
 	int pause;
 	cin >> pause;
 }
@@ -111,10 +91,10 @@ void RandomPrimeTests()
 	GenerateNumTests();
 }
 
-//int main(int argc, char *argv[]) {
-//   RandomPrimeTests();    
-//   //list<unsigned char> listed;
-//   //listed.push_front(0);
-//   //listed.pop_front();
-//   return 0;
-//}
+int main(int argc, char *argv[]) {
+   RandomPrimeTests();    
+   //list<unsigned char> listed;
+   //listed.push_front(0);
+   //listed.pop_front();
+   return 0;
+}

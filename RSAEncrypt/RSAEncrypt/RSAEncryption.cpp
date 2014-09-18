@@ -5,7 +5,6 @@ RSAEncryption::RSAEncryption()
 {
 }
 
-
 RSAEncryption::~RSAEncryption()
 {
 }
@@ -18,6 +17,16 @@ void RSAEncryption::setPhiN(BigInt p, BigInt q)
 void RSAEncryption::setN(BigInt p, BigInt q)
 {
 	n = (p * q);
+}
+
+void RSAEncryption::setN(string tempN)
+{
+	n = BigInt(tempN);
+}
+
+BigInt RSAEncryption::getN()
+{
+	return n;
 }
 
 BigInt RSAEncryption::ModInverse(string tempE, string tempP, string tempQ)
@@ -108,21 +117,30 @@ void RSAEncryption::outputDN()
 	cout << "(d, n): (" << x << ", " << n << ")." << endl;
 }
 
-BigInt RSAEncryption::MessageToInt(string message)
+BigInt RSAEncryption::MessageToInt(BigInt e, string n, string message)
 {
+	setN(n);
 	int m = int(message[0]);
-	BigInt msg(m);
+	BigInt temp(m);
 	//int count = 1;
 	for (int count = 1; count < message.length(); count++) //when length() is 1 we don't want to get into the loop
 	{
-		msg = (msg * 128) + int(message[count]);
+		temp = (temp * 128) + int(message[count]);
 		//m = m * 128 + int(message[count]);
+	}
+	BigInt msg;
+	msg = BigInt::modExp(temp, e, getN());
+	if (msg > getN())
+	{
+		throw new invalid_argument("Message cannot be bigger than n, choose a smaller message please.");
 	}
 	return msg;
 }
 
-string RSAEncryption::IntToMessage(BigInt num) //4 characters per message for now
+string RSAEncryption::IntToMessage(BigInt d, string n, BigInt num) //4 characters per message for now
 {
+	setN(n);
+	num = BigInt::modExp(num, d, getN());
 	bool large = true;
 	BigInt letter(0);
 	int msgASCII;
@@ -146,15 +164,13 @@ string RSAEncryption::IntToMessage(BigInt num) //4 characters per message for no
 void messageConvertTests()
 {
 	RSAEncryption ex;
-	cout << ex.MessageToInt("LAST") << "= 160459220" << endl;
-	BigInt test(160459220);
-	cout << ex.IntToMessage(test) << "= LAST" << endl;
-	cout << ex.MessageToInt("HELLOIAMTERA") << endl;
-	BigInt test2(ex.MessageToInt("HELLOIAMTERA"));
-	//Takes a while since this is not split up
-	cout << ex.IntToMessage(test2) << "=HELLOIAMTERA" << endl;
-	int pause;
-	cin >> pause;
+	BigInt test(ex.MessageToInt(BigInt(79), "3337", "Z"));
+	cout << test << " is the message as an integer" << endl;
+	cout << ex.IntToMessage(BigInt(1019), "3337", test) << " should be Z" << endl;
+
+	BigInt test2(ex.MessageToInt(BigInt(173), "40913", "CA"));
+	cout << test2 << " is the message as an integer" << endl;
+	cout << ex.IntToMessage(BigInt(11237), "40913", test2) << " should be CA" << endl;
 }
 
 void modInverseTests()
@@ -165,7 +181,7 @@ void modInverseTests()
 
 void rsaEncryptionTests()
 {
-	//messageConvertTests();
+	messageConvertTests();
 	modInverseTests();
 }
 

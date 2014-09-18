@@ -16,8 +16,6 @@ public:
 	~RandomPrime();
 	void Initialize();
 	bool FermatsLittleTest();
-	//BigInt GenerateNum(BigInt, BigInt);
-
 	BigInt getNum();
 };
 
