@@ -1,3 +1,7 @@
+/*
+Tera Staten   tns26   9/24/14
+*/
+
 #pragma once
 #ifndef RANDOMPRIMEGEN_H
 #define RANDOMPRIMEGEN_H

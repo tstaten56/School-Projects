@@ -1,6 +1,10 @@
 /*##############################
 # written by a UA student.   #
 # all rights are reserved.   #
+# some additional            #
+# functionality written by   #
+# Tera Staten    tns26       #
+#      9/24/14		     	 #
 ##############################*/
 
 #include "BigInt.h"
@@ -94,7 +98,6 @@ BigInt BigInt::bigExp(BigInt base, BigInt exp)
 		//exponent even
 		return bigExp((base*base), (exp / 2));
 	}
-	//BigInt temp = bigExp()
 }
 
 BigInt BigInt::modExp(BigInt base, BigInt exp, BigInt const& mod){
@@ -112,40 +115,7 @@ BigInt BigInt::modExp(BigInt base, BigInt exp, BigInt const& mod){
 	else {
 		return (((temp*temp) % mod)*base) % mod;
 	}
-	//BigInt remainder;
-	//BigInt x(1);
-	//while (exp != 0)
-	//{
-	//	remainder = exp % 2;
-	//	exp = exp / 2;
-	//	if (remainder == 1)
-	//	{
-	//		x = (x * base) % mod;
-	//	}
-	//    base = (base * base) % mod;
-	//}
-	//return x;
 }
-
-//BigInt BigInt::modExp(BigInt const& base, BigInt exp, BigInt const& mod) {
-//	if (exp < 0) {
-//		throw new invalid_argument("Exponent may not be negative in modExp");
-//	}
-//	if (exp == 0) {
-//		return 1;
-//	}
-//	if (exp == 1) {
-//		return base % mod;
-//	}
-//	if ((exp % 2) == 1) //exponent odd
-//	{
-//		return modExp((base*base), ((exp - 1) / 2), mod) % mod;
-//	}
-//	else //exponent even
-//	{
-//		return modExp((base * base), (exp / 2), mod) % mod;
-//	}
-//}
 
 BigInt BigInt::push(unsigned char digit)
 {
@@ -313,7 +283,6 @@ BigInt BigInt::operator-(BigInt const& thatNum) const {
 	if (!this->isPositive && thatNum.isPositive) {
 		return (*this) + (-thatNum);
 	}
-
 	// both numbers should be positive by this point
 	if (thatNum > *this) {
 		return -(thatNum - (*this));

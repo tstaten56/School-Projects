@@ -1,3 +1,7 @@
+/*
+Tera Staten   tns26   9/24/14
+*/
+
 #include "RSAEncryption.h"
 #include <list>
 
@@ -31,29 +35,6 @@ BigInt RSAEncryption::getN()
 
 BigInt RSAEncryption::ModInverse(string tempE, string tempP, string tempQ)
 {
-	//BigInt p(tempP);
-	//BigInt q(tempQ);
-	//setPhiN(p, q);
-	//BigInt a(phiN);
-	//BigInt m(tempE);
-	//BigInt tempX(0);
-	//BigInt tempY(1);
-	//BigInt u(1);
-	//BigInt v(0);
-	//BigInt b(m);
-	//while (a != 0)
-	//{
-	//	BigInt q(b / a);
-	//	BigInt temp1(b % a);
-	//	BigInt temp2(tempX - (u * q));
-	//	BigInt temp3(tempY - (v * q));
-	//	b = a;
-	//	a = temp1;
-	//	tempX = u;
-	//	tempY = v;
-	//	u = temp2;
-	//	v = temp3;
-	//}
 	setN(BigInt(tempP), BigInt(tempQ));
 	setPhiN(BigInt(tempP), BigInt(tempQ));
 	RSAEncryption::ExtEuclid(BigInt(tempE), phiN);
@@ -61,22 +42,11 @@ BigInt RSAEncryption::ModInverse(string tempE, string tempP, string tempQ)
 	{
 		x = phiN + x;
 	}
-	//else
-	//{
-	//	x = tempX;
-	//}
-	////y = tempY; Shouldn't need this
-	//gcdNum = b;
 	return (u + phiN) % phiN;
 }
 
 void RSAEncryption::ExtEuclid(BigInt a, BigInt m)
 {
-	//BigInt p(tempP);
-	//BigInt q(tempQ);
-	//setPhiN(a);
-	//BigInt a(phiN);
-	//BigInt m(tempE);
 	BigInt tempX(0);
 	BigInt tempY(1);
 	BigInt u(1);

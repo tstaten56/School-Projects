@@ -1,3 +1,6 @@
+/*
+Tera Staten   tns26   9/24/14
+*/
 #include "RandomPrime.h"
 
 RandomPrime::RandomPrime()
@@ -19,6 +22,7 @@ void RandomPrime::Initialize()
 	//Find one random number and add it to the rest of them for the number of length
 	bool notPrime = true;
 	num.clear();
+	cout << "Please wait, testing random number to see if prime (5 a's tested with Fermat's Little Theorem): ";
 	//First digit is non-zero
 	unsigned char randNonZero(static_cast<unsigned char>((rand()) % 9) + 1);
 	num = num.push(randNonZero);
@@ -37,14 +41,27 @@ void RandomPrime::Initialize()
 			randInt++;
 		}
 		num = num.push(static_cast<unsigned char>(randInt));
-	}
-	while (notPrime)
-	{
-		cout << num << ", ";
-		notPrime = !FermatsLittleTest();
-		if (notPrime)
+		while (notPrime)
 		{
-			num = num + 2;
+			cout << num << ", ";
+			notPrime = !FermatsLittleTest();
+			if (notPrime)
+			{
+				num = num + 2;
+			}
+		}
+	}
+	else
+	{
+		while (notPrime)
+		{
+			notPrime = !FermatsLittleTest();
+			if (notPrime)
+			{
+				num.clear();
+				unsigned char randNonZero(static_cast<unsigned char>((rand()) % 9) + 1);
+				num = num.push(randNonZero);
+			}
 		}
 	}
 }
@@ -64,11 +81,9 @@ bool RandomPrime::FermatsLittleTest()
 	{							//Works like a charm for i < 2
 		BigInt ans(num.modExp(arr[i], num - 1, num));
 		if (ans != 1) {
-			//cout << "modExp answer != 1: " << ans << endl;
 			return false;
 		}
 	}
-	//cout << "modExp answer is == 1 " << ans << endl;
 	return true;
 }
 
@@ -80,8 +95,8 @@ BigInt RandomPrime::getNum()
 void GenerateNumTests()
 {
 	bool notPrime = true;
-	RandomPrime ex(10); //Change number here for digits of prime
-	cout << ex.getNum() << " is prime!";
+	RandomPrime ex(15); //Change number here for digits of prime
+	cout << "SUCCESS: " << ex.getNum() << " is prime!";
 	int pause;
 	cin >> pause;
 }
