@@ -30,11 +30,6 @@ public:
 
 	int getLength() const;
 	bool GetIsPositive() const;
-	//bool isPrime();
-
-	//static BigInt random(int const& digits);
-	//static BigInt randomOdd(int const& digits);
-	//static BigInt randomPrime(int const& digits);
 	static BigInt modExp(BigInt base, BigInt exponent, BigInt const& mod);
 
 	friend ostream& operator<<(ostream& stream, BigInt const& num);
@@ -71,7 +66,6 @@ public:
 
 private:
 	void borrow(IntList::reverse_iterator place) const;
-	//bool fermatTest(int);  
 };
 
 #endif

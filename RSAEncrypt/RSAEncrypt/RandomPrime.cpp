@@ -22,8 +22,15 @@ void RandomPrime::Initialize()
 	//Find one random number and add it to the rest of them for the number of length
 	bool notPrime = true;
 	num.clear();
+	BigInt max(1);
 	cout << "Please wait, testing random number to see if prime (5 a's tested with Fermat's Little Theorem): ";
-	//First digit is non-zero
+	//Build the max for number, needs to be less than this
+	for (int i = 0; i < this->length; i++)
+	{
+		max = max.push(0);
+	}
+	cout << "Max number is " << max << endl;
+	//First digit is non-zero of prime num
 	unsigned char randNonZero(static_cast<unsigned char>((rand()) % 9) + 1);
 	num = num.push(randNonZero);
 	if (length > 1)
@@ -41,13 +48,18 @@ void RandomPrime::Initialize()
 			randInt++;
 		}
 		num = num.push(static_cast<unsigned char>(randInt));
-		while (notPrime)
+		while (notPrime && (num < max))
 		{
 			cout << num << ", ";
 			notPrime = !FermatsLittleTest();
 			if (notPrime)
 			{
 				num = num + 2;
+			}
+			if (num > max)
+			{
+				cout << "Went over the max! Trying again!" << endl;
+				this->Initialize();
 			}
 		}
 	}
@@ -106,10 +118,10 @@ void RandomPrimeTests()
 	GenerateNumTests();
 }
 
-int main(int argc, char *argv[]) {
-   RandomPrimeTests();    
-   //list<unsigned char> listed;
-   //listed.push_front(0);
-   //listed.pop_front();
-   return 0;
-}
+//int main(int argc, char *argv[]) {
+//   RandomPrimeTests();    
+//   //list<unsigned char> listed;
+//   //listed.push_front(0);
+//   //listed.pop_front();
+//   return 0;
+//}

@@ -18,7 +18,8 @@ e is chosen by the user, it needs to be a number that is relatively prime to (p,
 the message as an integer by typing 'e' e n message through the CLI. This prints an integer that represents the encoded message. To decode that message, a user types 'd' d n message(as integer) and will receive 
 the decoded message.
 The exact use cases are as follows:
-·       yourProgram.exe  s   //your program should output a prime with s digit to the console
+·       yourProgram.exe  s   //program will output numbers it is testing against Fermat's theorem until it finds a prime one. If it goes over the maximum amount of digits the generator may spit out the same number
+				//multiple times because rand() generator is not truely random! Then the program will try again with prime initialization. 
 ·       yourProgram.exe  a b   //your program should output (x,y) s.t. gcd(a,b) = ax+by and y>0
 ·       yourProgram.exe  e p q //your program should output (d,n) s.t. ed=1%(p-1)(q-1), n=pq
 ·       yourProgram.exe  ‘e’ e n message   //your program should output the encrypted message
