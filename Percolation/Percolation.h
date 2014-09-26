@@ -1,6 +1,8 @@
 #pragma once
 class Percolation
 {
+private:
+
 public:
 	Percolation(); 
 	Percolation(int n);			  // create N-by-N grid, with all sites blocked
