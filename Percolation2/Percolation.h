@@ -1,4 +1,5 @@
 #pragma once
+#ifndef PERCOLATION_H
 #include <vector>
 using namespace std;
 class Percolation
@@ -19,3 +20,4 @@ public:
 	~Percolation();
 };
 
+#endif
