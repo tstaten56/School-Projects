@@ -10,6 +10,7 @@ Percolation::Percolation()
 Percolation::Percolation(int n)
 {
 	size = n;
+	//Grid is for open/closed
 	for (int i = 0; i < n; i++) {
 		vector<bool> row; // Create an empty row
 		for (int j = 0; j < n; j++) {
@@ -17,6 +18,15 @@ Percolation::Percolation(int n)
 		}
 		grid.push_back(row); // Add the row to the main vector
 	}
+	//Graph holds parent info
+	vector<int> row; //Create an empty row for open/closed
+	for (int i = 0; i < n; i++) {
+		for (int j = 0; j < n; j++) {
+			row.push_back(1); //Add an element (column) to the row
+		}
+		graph.push_back(row); //Add the row to the main vector
+	}
+	graph[1][1]
 }
 
 
@@ -27,6 +37,18 @@ Percolation::~Percolation()
 void Percolation::open(int i, int j)
 {
 	grid[i][j] = true;
+	//When this is opened we have to figure out parent nodes for surrounding nodes, and this one. so (i, j), (i,j+1), (i,j-1), (i+1,j), (i-1,j)
+	//if surrounding node is also true, getParent()
+}
+
+int Percolation::getParent(int i, int j)
+{
+	//Get the parent of this node, -1 means null or itself. Get the parent of the parent til we find -1 is the parent
+	if (graph[i][j] == -1)
+	{
+		return (i*size) + j;
+	}
+
 }
 
 bool Percolation::isOpen(int i, int j)
@@ -55,6 +77,7 @@ void Percolation::unblock(double p)
 {
 	//Function to unblock the cells based on factor of  p
 	srand(time(NULL));
+	srand(100); //DELETE THIS AFTER DEBUGGING
 	for (int i = 0; i < size; i++)
 	{
 		for (int j = 0; j < size; j++)
