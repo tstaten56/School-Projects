@@ -5,8 +5,8 @@ using namespace std;
 class Percolation
 {
 private:
-	vector< vector<bool> > grid; //building the open/closed graph
-	vector< vector<int> > graph; //building trees
+	vector< vector<bool> > grid; //building the open/closed board
+	vector<int> graph; //building trees
 	int size = 0;
 public:
 	Percolation();
@@ -17,7 +17,11 @@ public:
 	bool percolates();            // does the system percolate?
 	void unblock(double p);		  //Unblock cells with probability p
 	void outputGrid();
-	int getParent(int i, int j);
+	void outputGraph();
+	int getParent(int i);
+	bool differ(int a, int b);
+	void buildGraph();
+	void setParent(int parent, int child);
 
 	~Percolation();
 };
