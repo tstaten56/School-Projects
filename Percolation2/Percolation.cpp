@@ -1,6 +1,11 @@
 #include "Percolation.h"
+#include <string>
 #include <iostream>
+#include <fstream>
+#include <sstream>
 #include <time.h>
+
+using namespace std;
 
 Percolation::Percolation()
 {
@@ -42,6 +47,14 @@ void Percolation::open(int i, int j)
 	grid[i][j] = true;
 	//When this is opened we have to figure out parent nodes for surrounding nodes, and this one. so (i, j), (i,j+1), (i,j-1), (i+1,j), (i-1,j)
 	//if surrounding node is also true, getParent()
+}
+
+void Percolation::setGrid(int i, int j, char open)
+{
+	if (open == '1')
+	{
+		grid[i][j] = true;
+	}
 }
 
 int Percolation::getParent(int i)
@@ -88,18 +101,36 @@ bool Percolation::percolates()
 {
 	bool percolate = false;
 	buildGraph();
+	int max = size * (size - 1);
 	for (int k = 0; k < size; k++)
 	{
-		int parent = getParent(graph[k] + (size * (size - 1))); //Last row parents
+		int parent = getParent(k + max); //Last row parents
+		int one = graph[1]; //DELETE AFTER DEBUG
 		if (parent < size)
 		{
-			int mod = parent % size;
+			int mod = parent / size;  //try parent % size
 			if (grid[mod][parent - mod])
 			{
 				percolate = true;
 				break;
 			}
 		}
+	}
+	if (!percolate)
+	{
+		//int count = size - 1;
+		//for (int j = 0; j < size; j++)
+		//{
+		//	int parent = getParent(j); //First row of parents
+		//	int one = graph[1]; //DELETE AFTER DEBUG
+		//	if ((parent <= max) && (parent >(max - size))) //parent in last row
+		//	{
+		//		if (grid[][])
+		//			percolate = true;
+		//		break;
+		//	}
+		//	count++;
+		//}
 	}
 	return percolate;
 }
@@ -129,16 +160,32 @@ void Percolation::buildGraph()
 				{
 					if (left)
 					{ //if the two trees are both the same value we have to make sure they're connected
+						//int parent1 = getParent(num - size);
+						//int parent2 = getParent(num - 1);
+						//graph[num] = getParent(num - size);
 						if (getParent(num - size) == getParent(num - 1))
 						{
-							graph[num] = getParent(num - size);
+							graph[num] = getParent(num - 1); //or num - size
 						}
 						else
 						{
-							int parent = getParent(num - 1);
-							setParent(parent, getParent(num - size));
-							graph[num] = parent;
+							if (getParent(num - size) < size)
+							{
+								int child = getParent(num - 1);
+								setParent(child, getParent(num - size));
+								graph[num] = child;
+							}
+							else // if (getParent(num - 1) < size) or not
+							{
+								int child = getParent(num - size);
+								setParent(child, getParent(num - 1));
+								graph[num] = child;
+							}
 						}
+					}
+					else //left and node are not equal so parent is the top
+					{
+						graph[num] = getParent(num - size);
 					}
 				}
 			}
@@ -146,7 +193,7 @@ void Percolation::buildGraph()
 	}
 }
 
-void Percolation::setParent(int parent, int child)
+void Percolation::setParent(int child, int parent)
 {
 	graph[child] = parent;
 }
@@ -154,8 +201,8 @@ void Percolation::setParent(int parent, int child)
 void Percolation::unblock(double p)
 {
 	//Function to unblock the cells based on factor of  p
-	srand(time(NULL));
-	srand(100); //DELETE THIS AFTER DEBUGGING
+	//srand(time(NULL));
+	//srand(100); //DELETE THIS AFTER DEBUGGING
 	for (int i = 0; i < size; i++)
 	{
 		for (int j = 0; j < size; j++)
@@ -167,6 +214,23 @@ void Percolation::unblock(double p)
 			}
 		}
 	}
+}
+
+double Percolation::percolationRate(double p, int n, int s)
+{
+	int count = 0;
+	for (int i = 0; i < n; i++)
+	{
+		Percolation g(s);
+		g.unblock(p);
+		//g.outputGrid(); //used for debug
+		//cout << g.percolates() << endl;
+		if (g.percolates())
+		{
+			count++;
+		}
+	}
+	return static_cast<double>(count) / n;
 }
 
 void Percolation::outputGrid()
@@ -189,6 +253,72 @@ void Percolation::outputGraph()
 	{
 		cout << graph[i] << " ";
 	}
+}
+
+void Percolation::readFile(string fileName)
+{
+	string filename2 = fileName;
+	string line;
+	int numberOfLines = 0;
+	ifstream myFile;
+	int k = 0;
+	char temp = '1';
+	cout << "Opening file..." << endl;
+	myFile.open(fileName, ios::in);
+	if (!myFile.good())
+	{
+		cout << "There was an error!";
+	}
+	if (myFile.is_open())
+	{
+
+		int begin = 0;
+		cout << "File opened!" << endl;
+		while (getline(myFile, line))
+		{
+			numberOfLines++;
+		}
+		cout << "Number of lines in file (size): " << numberOfLines << endl;
+		myFile.clear();
+		myFile.seekg(begin);
+		Percolation g(numberOfLines);
+		if (myFile.good())
+		{
+			for (int i = 0; i < numberOfLines; i++)
+			{
+				for (int j = 0; j < numberOfLines; j++)
+				{
+					myFile.get(temp);
+					if ((temp != ' ') && (temp != '\n'))
+					{
+						g.setGrid(i, j, temp);
+					}
+					else
+					{
+						j--;
+					}
+				}
+			}
+		}
+		//g.outputGrid(); //for testing
+		cout << "Percolates: " << g.percolates() << endl;
+		cout << "Total number of clusters: " << g.countClusters() << endl;
+	}
+	//cout << "Closing file..." << endl;
+	myFile.close();
+}
+
+int Percolation::countClusters()
+{
+	int count = 0;
+	for (int i = 0; i < (size * size); i++)
+	{
+		if (graph[i] == -1)
+		{
+			count++;
+		}
+	}
+	return count;
 }
 
 void InitializeTests()
@@ -279,20 +409,55 @@ void PercolatesTests()
 		ex3.unblock(.6);
 		ex3.outputGrid();
 		cout << ex3.percolates() << endl;
+
+		Percolation ex4(15);
+		ex4.unblock(.6);
+		ex4.outputGrid();
+		cout << ex4.percolates() << endl;
+}
+
+void PercolationRateTests()
+{
+	Percolation ex1(1);
+	cout << ex1.percolationRate(.6, 10, 20) << endl;
+}
+
+void CountClustersTests()
+{
+	Percolation ex1(2);
+	ex1.unblock(.5);
+	ex1.percolates();
+	ex1.outputGrid();
+	cout << ex1.countClusters() << endl;
+
+	Percolation ex2(6);
+	ex2.unblock(.5);
+	ex2.percolates();
+	ex2.outputGrid();
+	cout << ex2.countClusters() << endl;
+
+	Percolation ex3(6);
+	ex3.unblock(.5);
+	ex3.percolates();
+	ex3.outputGrid();
+	cout << ex3.countClusters() << endl;
 }
 
 void PercolationTests()
 {
+	//PercolationRateTests();
 	//InitializeTests();
 	//OpenTests(); 
 	//UnblockTests();
 	//GetParentTests();
-	PercolatesTests();
+	//PercolatesTests(); //Run many times
+	CountClustersTests();
 }
 
-int main()
-{
-	PercolationTests();
-	return 0;
-}
+//int main()
+//{
+//	srand(time(NULL));
+//	PercolationTests();
+//	return 0;
+//}
 
