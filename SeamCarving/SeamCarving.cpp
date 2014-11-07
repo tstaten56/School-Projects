@@ -60,7 +60,7 @@ int SeamCarving::pickMin(int left, int mid, int right)
 	}
 }
 
-void SeamCarving::readFile(string fileName)
+void SeamCarving::readFile(string fileName, int vertSeams, int horzSeams)
 {
 	//string filename2 = fileName;
 	ifstream myFile;
@@ -139,12 +139,19 @@ void SeamCarving::readFile(string fileName)
 		//cout << "0,0: " << original[0] << endl;
 	}
 	myFile.close();
-	this->outputPic();
+	//this->outputPic();
 	this->buildEnergy();
-	this->outputEnergy();
+	//this->outputEnergy();
 	this->buildTotalEnergy();
-	this->outputTotalEnergy();
-	this->carveVert();
+	//this->outputTotalEnergy();
+	for (int vertSeamsLoop = 0; vertSeamsLoop < vertSeams; vertSeamsLoop++)
+	{
+		this->carveVert();
+	}
+	//for (int horzSeamsLoop = 0; horzSeamsLoop < horzSeams; horzSeamsLoop++)
+	//{
+	//	this->carveHorz();
+	//}
 }
 
 void SeamCarving::outputFile(string filename)
@@ -208,7 +215,6 @@ int SeamCarving::calcEnergy(int i, int j)
 		num += abs(pic[i][j] - pic[i][j + 1]);
 	}
 	return num;
-	return 0; //DELETE
 }
 
 void SeamCarving::buildTotalEnergy()
@@ -317,11 +323,11 @@ void SeamCarving::carveVert()
 	pic = temp;
 	cols--;
 	cout << "We are reborn!!! pic: " << endl;
-	this->outputPic();
+	//this->outputPic();
 	this->buildEnergy();
-	this->outputEnergy();
+	//this->outputEnergy();
 	this->buildTotalEnergy();
-	this->outputTotalEnergy();
+	//this->outputTotalEnergy();
 }
 
 int SeamCarving::removeVert(int i, int j)
@@ -432,8 +438,8 @@ void SeamCarving::outputTotalEnergy()
 void SeamCarvingTests()
 {
 	SeamCarving ex;
-	ex.readFile("readtest.pgm");
-	ex.outputFile("readtest.pgm");
+	ex.readFile("carvetest.pgm", 1, 0);
+	ex.outputFile("carvetest.pgm");
 	//ex.outputPic();
 	//ex.buildEnergy();
 	//ex.outputEnergy();
