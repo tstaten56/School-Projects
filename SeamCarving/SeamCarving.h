@@ -20,7 +20,7 @@ public:
 	SeamCarving();
 	SeamCarving(int numRow, int numCol);
 	~SeamCarving();
-	void readFile(string filename);
+	void readFile(string filename, int vertSeams, int horzSeams);
 	void setHeaderInfo(string typ, string comnt, string maxNum);
 	void setDimensions(string numRow, string numCol);
 	void outputPic(); //displays the picture in command line for testing
