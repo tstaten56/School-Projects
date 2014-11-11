@@ -1,7 +1,7 @@
-#include <iostream>
-#include "SeamCarving.h"
-using namespace std;
-
+//#include <iostream>
+//#include "SeamCarving.h"
+//using namespace std;
+//
 //int main (int argc, char *argv[])
 //{
 //	if (argc == 4)
@@ -12,7 +12,7 @@ using namespace std;
 //		horz = atoi(argv[2]);
 //		vert = atoi(argv[3]);
 //		SeamCarving ex;
-//		ex.readFile(file);
+//		ex.readFile(file, vert, horz);
 //	}
 //	else
 //	{
