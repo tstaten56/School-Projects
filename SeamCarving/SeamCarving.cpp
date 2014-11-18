@@ -19,7 +19,7 @@ SeamCarving::~SeamCarving()
 {
 }
 
-int minimum(int a, int b)
+int SeamCarving::minimum(int a, int b)
 {
 	if (a > b)
 	{
@@ -46,105 +46,98 @@ void SeamCarving::setDimensions(string numRow, string numCol)
 
 void SeamCarving::readFile(string fileName, int vertSeams, int horzSeams)
 {
+	string temp, maxNum, rowNum, colNum, type, comment;
+	comment = "";
 	ifstream myFile;
-	int k = 0;
-	cout << "Opening file..." << endl;
-	myFile.open(fileName, ios::in);
-	if (!myFile.good())
+	int lineNum = 1;
+	vector<string> tempImage;
+
+	//Test if File is open
+	myFile.open(fileName.c_str());
+	if (!myFile)
 	{
-		cout << "There was an error opening: " << fileName;
+		cout << "File Failed to Open! Filename:" << fileName << endl;
 	}
-	if (myFile.is_open())
+	cout << "Reading file..." << endl;
+	//Get the file from input
+	while (getline(myFile, temp))
 	{
-		cout << "File: " << fileName << " opened!" << endl;
-		string line, type, comment, row, col, maxNum;
-		string buildNum = "";
-		char ch;
-		getline(myFile, line);
-		type = line;
-		myFile.get(ch);
-		if (ch == '#')
+		if (temp[0] == '#')
 		{
-			comment = "#";
-			getline(myFile, line);
-			comment += line;
-			getline(myFile, line, ' ');
-			col = line;
+			//Storing comments
+			comment += temp;
+		}
+		else if (lineNum == 1)
+		{
+			//File type, aka P2
+			type = temp;
+			lineNum++;
+		}
+		else if (lineNum == 2)
+		{
+			//Size of the image
+			int space = temp.find(" ");
+			string xVal = temp.substr(0, space);
+			string yVal = temp.substr(space + 1);
+
+			colNum = xVal;
+			rowNum = yVal;
+			setDimensions(rowNum, colNum);
+			image = new int*[cols];
+			for (int i = 0; i < cols; i++)
+			{
+				image[i] = new int[rows];
+			}
+			lineNum++;
+		}
+		else if (lineNum == 3)
+		{
+			//Maximum value for the pixel
+			maxNum = temp;
+			setHeaderInfo(type, comment, maxNum);
+			lineNum++;
 		}
 		else
 		{
-			comment = "#Created by IfranView";
-			line = "";
-			line += ch;
-			bool notEnd = true;
-			while (notEnd)
+			//Content of the image
+			string value = "";
+			int stringLen = temp.length();
+			for (int i = 0; i < stringLen; i++)
 			{
-				myFile.get(ch);
-				if (ch != ' ')
+				if (temp[i] == ' ' || temp[i] == '\t' || temp[i] == '\n')
 				{
-					line += ch;
+					tempImage.push_back(value);
+					value = "";
 				}
 				else
 				{
-					notEnd = false;
-					col = line;
+					value += temp[i];
 				}
 			}
-		}
-		getline(myFile, line, '\n');
-		row = line;
-		getline(myFile, line);
-		maxNum = line;
-
-		setDimensions(row, col);
-		//Fill image with space
-		image = new int*[cols];
-		for (int i = 0; i < cols; i++)
-		{
-			image[i] = new int[rows];
-		}
-		setHeaderInfo(type, comment, maxNum);
-		pic.reserve(rows * cols);
-		for (int rowNum = 0; rowNum < rows; rowNum++)
-		{
-			bool notEnd = true;
-
-			vector<int> picRow;
-			for (int colNum = 0; colNum < cols; colNum++)
+			if (value != "")
 			{
-				bool partialNum = true;
-				while (partialNum)
-				{
-					myFile.get(ch);
-					if ((ch != ' ') && (ch != '\n') && (ch !='\t') && (!myFile.eof()))
-					{
-						buildNum += ch; //add the character
-					}
-					else if ((ch == ' ') || (ch == '\t') || (ch == '\n') || (myFile.eof()))
-					{
-						int num = atoi(buildNum.c_str());
-						partialNum = false;
-						pic.push_back(num);
-						buildNum = ""; //reset the buildNum
-					}
-				}
+				tempImage.push_back(value);
 			}
 		}
 	}
 	myFile.close();
-	//Fill image with content stored in vector
-	int picIt = 0;
+
+	//Add values to image[x][y]
+	int vectorIt = 0;
 	for (int y = 0; y < rows; y++)
 	{
 		for (int x = 0; x < cols; x++)
 		{
-			image[x][y] = pic[picIt];
-			picIt++;
+			string currentIteration = tempImage.at(vectorIt);
+			image[x][y] = atoi(currentIteration.c_str());
+			vectorIt++;
 		}
 	}
 	//Testing
 	//this->outputPic();
+	cout << "Carving seams..." << endl;
 	this->carving(vertSeams, horzSeams);
+	cout << "Outputting the file..." << endl;
 	this->outputFile(fileName, horzSeams);
 }
 
@@ -161,7 +154,7 @@ void SeamCarving::outputFile(string filename, int horzSeams)
 	}
 	else
 	{
-		myFile << type << "\n" << comment << "\n" << rows << " " << cols << "\n" << max << endl;
+		myFile << type << "\n" << comment << "\n" << cols << " " << rows << "\n" << max << endl;
 
 		for (int y = 0; y < rows; y++)
 		{
@@ -177,6 +170,7 @@ void SeamCarving::outputFile(string filename, int horzSeams)
 
 void SeamCarving::buildEnergy()
 {
+	//Deleting the old energy array first
 	if (energy != NULL)
 	{
 		for (int i = 0; i < cols - 1; i++)
@@ -190,7 +184,7 @@ void SeamCarving::buildEnergy()
 	{
 		energy[i] = new int[rows];
 	}
-
+	//Now building the new energy array
 	for (int y = 0; y < rows; y++)
 	{
 		for (int x = 0; x < cols; x++)
@@ -229,12 +223,54 @@ void SeamCarving::carving(int vertSeams, int horzSeams)
 	}
 	for (int horzSeamsLoop = 0; horzSeamsLoop < horzSeams; horzSeamsLoop++)
 	{
-		this->buildEnergy();
-		this->calcTotalHorzEnergy();
-		this->rebuildImageFromHorzSeam();
+		this->rotateImage();
+		this->calcTotalVertEnergy();
+		this->rebuildImageFromVertSeam();
+		this->rotateImage();
 	}
 }
 
+void SeamCarving::rotateImage()
+{
+	if (energy != NULL)
+	{
+		for (int i = 0; i < cols - 1; i++)
+		{
+			delete[] energy[i];
+		}
+		delete[] energy;
+		energy = NULL;
+	}
+
+	int preRotateCols = cols;
+	int preRotateRows = rows;
+
+	rows = preRotateCols;
+	cols = preRotateRows;
+
+	int** oldImage = image;
+	image = new int*[cols];
+	for (int i = 0; i < cols; i++)
+	{
+		image[i] = new int[rows];
+	}
+
+	for (int y = 0; y < rows; y++)
+	{
+		for (int x = 0; x < cols; x++)
+		{
+			image[x][y] = oldImage[y][x];
+		}
+	}
+
+	buildEnergy();
+
+	for (int i = 0; i < rows; i++)
+	{
+		delete[] oldImage[i];
+	}
+	delete[] oldImage;
+}
 
 void SeamCarving::calcTotalHorzEnergy()
 {
@@ -352,6 +388,11 @@ void SeamCarving::rebuildImageFromHorzSeam()
 		image[i] = new int[rows];
 	}
 	//Rebuild image using pic
+	int numOff;
+	if (pic.size() != (rows*cols))
+	{
+		numOff = (rows*cols) - pic.size();
+	}
 	int picIt = 0;
 	for (int x = 0; x < cols; x++)
 	{
@@ -359,7 +400,10 @@ void SeamCarving::rebuildImageFromHorzSeam()
 		{
 			image[x][y] = pic[picIt];
 			picIt++;
-
+			if (picIt == ((rows*cols) - numOff))
+			{
+				break;
+			}
 		}
 	}
 }
@@ -504,11 +548,11 @@ void SeamCarving::outputPic()
 void SeamCarvingTests()
 {
 	SeamCarving ex;
-	ex.readFile("bug.pgm", 0, 20);
+	ex.readFile("twoBalls.pgm", 211, 68);
 }
 
-int main()
-{
-	SeamCarvingTests();
-	return 0;
-}
+//int main()
+//{
+//	SeamCarvingTests();
+//	return 0;
+//}
