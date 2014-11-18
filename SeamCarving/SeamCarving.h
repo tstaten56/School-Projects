@@ -14,8 +14,6 @@ private:
 	int **image;
 	int **energy;
 	vector<int> pic;
-	//vector< vector<int> > energy;
-	vector< vector<int> > totalEnergy;
 public:
 	SeamCarving();
 	SeamCarving(int numRow, int numCol);
@@ -30,7 +28,9 @@ public:
 	void calcTotalHorzEnergy(); //calcs the total energy horizontally
 	void outputFile(string filename, int horzSeams); //outputs the current picture into a new file with the same filename, but with _processed
 	void carving(int verticalSeams, int horzSeams); //calls carveVert/carveHorz a specified number of times
-	void rebuildImageFromVertSeam();
-	void rebuildImageFromHorzSeam();
+	void rebuildImageFromVertSeam(); //Exactly what the name says, removes the -1's from the array
+	void rebuildImageFromHorzSeam(); //Not used anymore but just in case, for future
+	void rotateImage();  //For horizontal seam carving
+	int minimum(int a, int b); //Minimum between two numbers (trivial)
 };
 #endif
